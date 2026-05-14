@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 
 import { useAuth } from "@/services/auth-context";
 import { useToast } from "@/hooks/use-toast";
+import { cmsService } from "@/services/cms-service";
 
 
 
@@ -40,6 +41,15 @@ export default function LoginPage() {
                     : "You have successfully logged in.",
             });
             setLocation(loggedInUser.role === 'admin' ? '/admin' : '/profile');
+
+            // Fire-and-forget CMS session warmup. This pre-warms the marketplace
+            // session without blocking the portal login redirect. If warmup fails
+            // the marketplace lazy-fallback will re-establish the session on first use.
+            if (loggedInUser.role !== 'admin' && !loggedInUser.requirePasswordChange) {
+                cmsService.warmup(password).catch(() => {
+                    // Warmup failure is non-fatal; marketplace will handle it lazily.
+                });
+            }
 
         } catch (error: any) {
             toast({

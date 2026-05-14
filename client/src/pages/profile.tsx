@@ -91,7 +91,14 @@ import { MembershipCertificate } from "@/components/membership-certificate";
 
 export default function ProfilePage() {
     const [, setLocation] = useLocation();
-    const { user, logout, loading: authLoading, updateUser } = useAuth();
+    const {
+        user,
+        logout,
+        loading: authLoading,
+        updateUser,
+        temporaryPassword,
+        clearTemporaryPassword,
+    } = useAuth();
     const [business, setBusiness] = useState<BusinessData | null>(null);
     const [loading, setLoading] = useState(true);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -308,8 +315,21 @@ export default function ProfilePage() {
         try {
             setIsSubmittingPassword(true);
             const { authService } = await import('@/lib/auth-service');
+            const currentPassword = user?.requirePasswordChange
+                ? temporaryPassword
+                : passwordForm.currentPassword;
+
+            if (!currentPassword) {
+                toast({
+                    title: "Temporary password missing",
+                    description: "Please log out and sign in again with your temporary password before updating it.",
+                    variant: "destructive",
+                });
+                return;
+            }
+
             const response = await authService.changePassword({
-                currentPassword: passwordForm.currentPassword,
+                currentPassword,
                 newPassword: passwordForm.newPassword,
                 confirmPassword: passwordForm.confirmPassword
             });
@@ -323,6 +343,7 @@ export default function ProfilePage() {
                 if (user) {
                     updateUser({ ...user, requirePasswordChange: false });
                 }
+                clearTemporaryPassword();
                 setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
             }
         } catch (error: any) {
@@ -390,6 +411,15 @@ export default function ProfilePage() {
         { key: "finances", label: "Finances", icon: <PaymentIcon className="w-4 h-4" /> },
         { key: "marketplace", label: "Marketplace", icon: <Store className="w-4 h-4" /> },
         { key: "events", label: "Events & Trade", icon: <Activity className="w-4 h-4" /> },
+    ];
+
+    // Shorter labels for the compact mobile bottom bar
+    const bottomNavItems = [
+        { key: "overview",     label: "Home",      icon: <LayoutDashboard className="w-5 h-5" /> },
+        { key: "business",     label: "Business",  icon: <Briefcase className="w-5 h-5" /> },
+        ...(DIRECTORY_MODE ? [] : [{ key: "finances", label: "Finances", icon: <PaymentIcon className="w-5 h-5" /> }]),
+        { key: "marketplace",  label: DIRECTORY_MODE ? "Directory" : "Market", icon: <Store className="w-5 h-5" /> },
+        { key: "events",       label: "Events",    icon: <Activity className="w-5 h-5" /> },
     ];
 
     const stats = [
@@ -491,7 +521,9 @@ export default function ProfilePage() {
                 <header className="lg:hidden flex items-center justify-between p-4 border-b border-border/40 bg-white dark:bg-slate-900 sticky top-0 z-30">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-extrabold text-xs">K</div>
-                        <h2 className="font-extrabold text-sm uppercase">Dashboard</h2>
+                        <h2 className="font-extrabold text-sm uppercase">
+                            {sideNavItems.find(i => i.key === activeTab)?.label ?? "Dashboard"}
+                        </h2>
                     </div>
                     <div className="flex items-center gap-2">
                         <Button variant="ghost" size="icon" onClick={() => setShowCertificate(true)}>
@@ -503,7 +535,7 @@ export default function ProfilePage() {
                     </div>
                 </header>
 
-                <div className="p-6 lg:p-10 w-full max-w-[1600px] flex flex-col gap-8">
+                <div className="p-6 pb-28 lg:p-10 w-full max-w-[1600px] flex flex-col gap-8">
                     {/* ═══ Compact Profile Header ═══ */}
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -889,6 +921,28 @@ export default function ProfilePage() {
                     </div>
                 </div>
             </main>
+
+            {/* ──── Mobile Bottom Navigation ─────────────────────────────── */}
+            <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-border/40 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] flex items-stretch">
+                {bottomNavItems.map((item) => (
+                    <button
+                        key={item.key}
+                        onClick={() => setActiveTab(item.key)}
+                        className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors duration-150 ${
+                            activeTab === item.key ? "text-primary" : "text-muted-foreground"
+                        }`}
+                    >
+                        <span className={`flex items-center justify-center w-10 h-10 rounded-2xl transition-all duration-200 ${
+                            activeTab === item.key ? "bg-primary/10 scale-105" : ""
+                        }`}>
+                            {item.icon}
+                        </span>
+                        <span className="text-[9px] font-bold uppercase tracking-wide w-full text-center px-0.5 truncate leading-none">
+                            {item.label}
+                        </span>
+                    </button>
+                ))}
+            </nav>
 
             {/* Membership Certificate Modal */}
             {showCertificate && (

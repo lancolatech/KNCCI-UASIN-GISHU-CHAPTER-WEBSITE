@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import * as React from "react";
+import { Switch, Route, useLocation } from "wouter";
 import { HelmetProvider } from "react-helmet-async";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -70,6 +71,7 @@ function App() {
             <AuthProvider>
               <RegistrationProvider>
                 <MembershipProvider>
+                  <ScrollToTop />
                   <Toaster />
                   <Router />
                   <WhatsAppFloat />
@@ -88,6 +90,16 @@ function App() {
 
 import { MembershipDialog } from "@/components/membership-dialog";
 import { useMembership } from "@/contexts/membership-context";
+
+function ScrollToTop() {
+  const [location] = useLocation();
+
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location]);
+
+  return null;
+}
 
 function MembershipDialogWrapper() {
   const { isOpen, closeMembership } = useMembership();

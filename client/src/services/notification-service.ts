@@ -74,7 +74,7 @@ export const notificationService = {
             <p>Thank you for applying for membership with the <strong>Kenya National Chamber of Commerce & Industry (KNCCI)</strong> for your business, <strong>${company}</strong>.</p>
             <p>Our team is currently reviewing your details. This process typically takes 1–2 business days. We will notify you once your application has been processed.</p>
             <p>In the meantime, feel free to explore our portal to learn more about upcoming events and member benefits.</p>
-            <p style="text-align: center;"><a href="https://kncci.or.ke" class="btn">Visit Portal</a></p>
+            <p style="text-align: center;"><a href="https://kncci.the-cube.co.ke/" class="btn">Visit Portal</a></p>
         </div>
         <div class="footer"><p>&copy; 2026 KNCCI. All rights reserved.<br>Championing Business Prosperity.</p></div>
     </div>
@@ -100,7 +100,7 @@ export const notificationService = {
 
     async sendApprovalEmail(name: string, company: string, regNo: string, plan: string, email: string, password?: string) {
         const subject = 'Welcome to the Chamber! — Application Approved';
-        const loginLink = 'https://kncci.or.ke/login';
+        const loginLink = 'https://kncci.the-cube.co.ke/login';
         const passwordInfo = password ? `
             <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0;">
                 <p><strong>Login Email:</strong> ${email}<br>

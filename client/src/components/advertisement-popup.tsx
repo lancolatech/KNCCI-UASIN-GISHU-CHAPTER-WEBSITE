@@ -76,12 +76,12 @@ export function AdvertisementPopup() {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-4xl p-0 overflow-hidden gap-0 border-0 rounded-[2rem] bg-white/95 dark:bg-slate-950/95 shadow-[0_35px_120px_-35px_rgba(15,23,42,0.65)] backdrop-blur-xl">
-        <div className="relative grid md:grid-cols-[1.15fr_0.85fr]">
+      <DialogContent className="w-[min(calc(100vw-2rem),24rem)] overflow-hidden gap-0 border-0 p-0 rounded-[2rem] bg-white/92 shadow-[0_25px_90px_-30px_rgba(15,23,42,0.58)] backdrop-blur-xl sm:w-[min(calc(100vw-2.5rem),26rem)] md:w-[calc(100vw-2rem)] md:max-w-4xl md:bg-white/95 md:shadow-[0_35px_120px_-35px_rgba(15,23,42,0.65)] dark:bg-slate-950/92 dark:md:bg-slate-950/95">
+        <div className="relative grid max-h-[min(82vh,42rem)] grid-rows-[11rem_minmax(0,1fr)] md:max-h-none md:grid-cols-[1.15fr_0.85fr] md:grid-rows-none">
           {/* Dismiss button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-slate-950/55 text-white backdrop-blur-md transition-colors hover:bg-slate-950/75"
+            className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/25 bg-slate-950/55 text-white backdrop-blur-md transition-colors hover:bg-slate-950/75 md:right-4 md:top-4 md:h-9 md:w-9"
             aria-label="Dismiss advertisement"
           >
             <X className="w-4 h-4" />
@@ -89,39 +89,41 @@ export function AdvertisementPopup() {
 
           {/* Image */}
           {ad.imageUrl && (
-            <div className="relative min-h-[240px] overflow-hidden bg-slate-950 md:min-h-[440px]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.3),transparent_35%),linear-gradient(135deg,rgba(15,23,42,0.1),rgba(15,23,42,0.7))]" />
+            <div className="relative overflow-hidden bg-slate-950 md:min-h-[440px]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.32),transparent_34%),linear-gradient(150deg,rgba(15,23,42,0.12),rgba(15,23,42,0.76))]" />
+              <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/55 via-slate-950/10 to-transparent md:hidden" />
               <img
                 src={ad.imageUrl}
                 alt={ad.title}
-                className="relative z-10 h-full w-full object-contain p-4 md:p-6"
+                className="relative z-10 h-full w-full object-cover object-center md:object-contain md:p-6"
               />
               <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-r from-transparent to-white/90 dark:to-slate-950/90 md:block" />
             </div>
           )}
 
           {/* Content */}
-          <div className="relative flex flex-col justify-center bg-white px-6 py-7 dark:bg-slate-950 md:px-8 md:py-10">
+          <div className="relative flex flex-col justify-center overflow-y-auto bg-white px-5 pb-5 pt-4 dark:bg-slate-950 md:px-8 md:py-10">
+            <div className="absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent md:hidden" />
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/35 to-transparent md:left-0 md:right-auto md:top-8 md:h-[calc(100%-4rem)] md:w-px md:bg-gradient-to-b" />
-            <div className="space-y-5 md:pl-4">
+            <div className="space-y-4 md:space-y-5 md:pl-4">
               {ad.badgeText && (
-                <span className="inline-flex w-fit items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
+                <span className="inline-flex w-fit items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.26em] text-primary md:text-[11px] md:tracking-[0.24em]">
                   {ad.badgeText}
                 </span>
               )}
 
-              <div className="space-y-3">
-                <DialogTitle className="text-2xl font-black leading-tight tracking-tight text-foreground md:text-[2rem]">
+              <div className="space-y-2.5 md:space-y-3">
+                <DialogTitle className="max-w-[15ch] text-[1.35rem] font-black leading-[1.05] tracking-tight text-foreground md:max-w-none md:text-[2rem]">
                   {ad.title}
                 </DialogTitle>
-                <DialogDescription className="text-sm leading-7 text-slate-600 dark:text-slate-300 md:text-[15px]">
+                <DialogDescription className="max-w-[34ch] text-[13px] leading-6 text-slate-600 dark:text-slate-300 md:max-w-none md:text-[15px] md:leading-7">
                   {ad.description}
                 </DialogDescription>
               </div>
 
               {ad.ctaUrl && (
-                <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-                  <Button asChild className="h-11 rounded-xl px-6 text-sm font-bold shadow-lg shadow-primary/20">
+                <div className="flex flex-col gap-2.5 pt-1.5 sm:flex-row md:gap-3 md:pt-2">
+                  <Button asChild className="h-10 rounded-2xl px-5 text-sm font-bold shadow-lg shadow-primary/20 md:h-11 md:rounded-xl md:px-6">
                     <a
                       href={ad.ctaUrl}
                       target={ad.openInNewTab ? "_blank" : "_self"}
@@ -134,7 +136,7 @@ export function AdvertisementPopup() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="h-11 rounded-xl border-border/50 px-6 text-sm font-bold"
+                    className="h-10 rounded-2xl border-border/50 px-5 text-sm font-bold md:h-11 md:rounded-xl md:px-6"
                     onClick={handleClose}
                   >
                     Maybe later
@@ -144,7 +146,7 @@ export function AdvertisementPopup() {
 
               <button
                 onClick={handleClose}
-                className="w-fit pt-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="w-fit pt-0.5 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground md:pt-1 md:text-xs md:normal-case md:tracking-normal"
               >
                 Close
               </button>
